@@ -1,25 +1,30 @@
-async function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+  
+    const formData = new FormData(this);
+    const data = {
+      email: formData.get('email'),
+      password: formData.get('password')
+    };
+  
     try {
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(result.message);
-        } else {
-            alert(result.message);
-        }
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+  
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+  
+      const result = await response.json();
+      document.getElementById('message').textContent = result.message;
     } catch (error) {
-        console.error('There has been a problem with your fetch operation:', error);
-        alert('An error occurred while logging in.');
+      console.error('Error:', error);
+      document.getElementById('message').textContent = 'An error occurred, please try again.';
     }
-}
+  });
+  
